@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pythagorean Theorem</title>
+</head>
+<body>
+
+<style>
+body {
+    font-family:'Montserrat', sans-serif;
+    text-align: center;
+    margin: 20px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input {
+    padding: 8px;
+    margin: 5px;
+}
+
+button {
+    padding: 20px;
+    margin-top: 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+#result {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+#steps {
+    margin-top: 20px;
+    text-align: left;
+}
+</style>
+
+    <h1>Teoreem, hüpotenuusi arvutaja</h1>
+
+    <p>a²+b² = c² </p>
+    <p>a = 5   b = 7:</p>
+    <p>5²+7² = 74</p>
+    <p>25 + 49 = 74</p>
+    <p>c=8.602325267042627</p>
+
+    <label for="sidea">a külje pikkus:</label>
+    <input type="number" id="sidea" placeholder="kirjuta lahtrisse a külje pikkus" required>
+    <br>
+    <label for="sideb">b külje pikkus</label>
+    <input type="number" id="sideb" placeholder="kirjuta lahtrisse b külje pikkus" required>
+    <br>
+    <button onclick="calculatePythagorean()">Arvuta</button>
+    <div id="result"></div>
+    <div id="steps"></div>
+
+    <script>
+        async function calculatePythagorean() {
+            const sideA = parseFloat(document.getElementById('sideA').value);
+            const sideB = parseFloat(document.getElementById('sideB').value);
+
+            const requestBody = {
+                sideA,
+                sideB
+            };
+
+            const response = await fetch('/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            const result = await response.json();
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
+
+            const stepsDiv = document.getElementById('steps');
+            stepsDiv.innerHTML = '';
+
+            if (result.error) {
+                resultDiv.innerHTML = `<p>${result.error}</p>`;
+            } else {
+                if (result.sideC !== undefined) {
+                    resultDiv.innerHTML = `The length of the hypotenuse (Side C) is: ${result.sideC.toFixed(2)}`;
+                } else if (result.sideB !== undefined) {
+                    resultDiv.innerHTML = `The length of Side B is: ${result.sideB.toFixed(2)}`;
+                } else if (result.sideA !== undefined) {
+                    resultDiv.innerHTML = `The length of Side A is: ${result.sideA.toFixed(2)}`;
+                }
+
+                if (result.steps) {
+                    stepsDiv.innerHTML = `<p>Calculation Steps:</p>${result.steps.map(step => `<p>${step}</p>`).join('')}`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
