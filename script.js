@@ -1,3 +1,16 @@
+const express = require('express');
+const app = express();
+const nunjcks = require('nunjucks');
+
+nunjcks.configure ('views', {
+autoescape: true,
+express: app
+});
+
+app.listen(3000);
+console.log('Server started on http://localhost:3000')
+
+
 async function calculatePythagorean() {
         const sidea = parseFloat(document.getElementById('sidea').value);
         const sideb = parseFloat(document.getElementById('sideb').value);
@@ -39,6 +52,3 @@ async function calculatePythagorean() {
             }
         }
         }
-
-app.listen(3000);
-console.log('Server started on http://localhost:3000')
